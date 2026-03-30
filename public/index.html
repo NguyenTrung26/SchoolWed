@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Hệ thống phụ huynh VKU - Trường Đại học CNTT&TT Việt - Hàn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">   
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/nprogress/nprogress.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/iCheck/skins/flat/green.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/jqvmap/dist/jqvmap.min.css" rel="stylesheet"/>
+    <link href="https://daotao.vku.udn.vn/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
+    <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link href="https://daotao.vku.udn.vn/public/gv/build/css/custom.min.css" rel="stylesheet">
+</head>
+
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <!-- top navigation -->
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <nav>
+                        <ul class="nav navbar-nav navbar-right" style="padding-left: 0px !important; margin:0px !important">
+                            <li class="">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    Xin chào phụ huynh <b id="greetingName">Nguyễn Nam</b>!
+                                </a>
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li><a href="javascript:void(0)" onclick="logout()"><i class="fa fa-sign-out pull-right"></i> Thoát</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- page content -->
+            <div class="right_col" role="main" style="margin-left:0px !important">
+                <div class="">
+                    <div class="row">
+                        <!-- page content -->
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <!-- School Header -->
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2 style="text-align: center; margin: 0;">TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN VÀ TRUYỀN THÔNG VIỆT - HÀN</h2>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content">
+                                    <div class="bs-example" data-example-id="simple-jumbotron">
+                                        <div class="jumbotron" style="background-color: #f8f8f8; margin-bottom: 0;">
+                                            <h3>Xin chào phụ huynh, <span id="parentName">Nguyễn Nam</span>!</h3>
+                                            <p>VKU - TỰ HÀO LÀ TRƯỜNG ĐẠI HỌC CÔNG LẬP QUỐC TẾ HÀNG ĐẦU VỀ ĐÀO TẠO, NGHIÊN CỨU CÔNG NGHỆ THÔNG TIN, TRUYỀN THÔNG VÀ KINH TẾ SỐ CỦA MIỀN TRUNG - TÂY NGUYÊN VÀ CẢ NƯỚC</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Student Section -->
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>Sinh viên</h2>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content">
+                                    <div class="row">
+                                        <div id="studentInfoLoading" class="loading">
+                                            <p>Đang tải dữ liệu...</p>
+                                        </div>
+                                        <div id="studentInfo" style="display:none;">
+                                            <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
+                                                <div class="well profile_view">
+                                                    <div class="col-sm-12">
+                                                        <div class="left col-xs-7">
+                                                            <h4><strong id="studentFullName">NGUYỄN TRUNG</strong></h4>
+                                                            <p>Mã Sinh viên: <strong id="studentId">22IT318</strong></p>
+                                                            <ul class="list-unstyled">
+                                                                <li><i class="fa fa-bank"></i> Lớp sinh hoạt: <strong id="studentClass">22SE1</strong> </li>
+                                                                <li><i class="fa fa-graduation-cap"></i> Ngành: <strong id="studentMajor">Chuyên ngành Công nghệ phần mềm (Kỹ sư)</strong> </li>
+                                                                <li><i class="fa fa-user"></i> Khoa: <strong id="studentDept">-</strong> </li>
+                                                                <li><i class="fa fa-info"></i> Khóa học: <strong id="studentYear">-</strong> </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="right col-xs-5 text-center">
+                                                            <img id="studentPhoto" src="https://daotao.vku.udn.vn/uploads/sinhvien/22IT318.jpg" alt="" class="img-circle img-responsive">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 bottom text-center">
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <p class="ratings">
+                                                                <a>4.0</a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star-o"></span></a>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <a id="viewDetailLink" href="#">
+                                                                <button type="button" class="btn btn-success">
+                                                                    <i class="fa fa-eye"></i> Xem Chi tiết
+                                                                </button>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common Info Section -->
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>Thông tin chung</h2>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content">
+                                    <div class="row">
+                                        <div id="tuitionLoading" class="loading">
+                                            <p>Đang tải dữ liệu...</p>
+                                        </div>
+                                        <div id="tuitionInfo" style="display:none;">
+                                            <!-- Tuition Card -->
+                                            <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
+                                                <div class="well profile_view">
+                                                    <div class="col-sm-12">
+                                                        <div class="left col-xs-7">
+                                                            <h2>THÔNG TIN HỌC PHÍ</h2>
+                                                            <p><strong>Tiền đã nộp: </strong><span id="paidAmount">7.964.800 đ</span> </p>
+                                                            <ul class="list-unstyled">
+                                                                <li><strong>Tiền còn nợ: </strong><span id="remainingAmount">Đã đóng HP: 7.964.800 đ</span> </li>
+                                                                <li><strong>Số buổi vắng: </strong><span id="absencesCount">3</span> </li>
+                                                                <li><strong>Khen thưởng: </strong><span id="rewardInfo">Không</span> </li>
+                                                                <li><strong>Kỷ luật: </strong><span id="punishmentInfo">Không</span> </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="right col-xs-5 text-center">
+                                                            <img src="images/img.jpg" alt="" class="img-circle img-responsive">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 bottom text-center">
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <p class="ratings">
+                                                                <a>4.0</a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star-o"></span></a>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <button type="button" class="btn btn-success btn-xs">
+                                                                <i class="fa fa-phone"></i> Liên hệ
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Department 1 -->
+                                            <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
+                                                <div class="well profile_view">
+                                                    <div class="col-sm-12">
+                                                        <div class="left col-xs-7">
+                                                            <h2>PHÒNG ĐÀO TẠO</h2>
+                                                            <p><strong>Phòng: </strong> V.A103 </p>
+                                                            <ul class="list-unstyled">
+                                                                <li><i class="fa fa-envelope"></i> Email: daotao@vku.udn.vn </li>
+                                                                <li><i class="fa fa-phone"></i> Phone: 0236.3.667.113 </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="right col-xs-5 text-center">
+                                                            <img src="images/img.jpg" alt="" class="img-circle img-responsive">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 bottom text-center">
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <p class="ratings">
+                                                                <a>4.0</a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star-o"></span></a>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <button type="button" class="btn btn-success btn-xs">
+                                                                <i class="fa fa-phone"></i> Liên hệ
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Department 2 -->
+                                            <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
+                                                <div class="well profile_view">
+                                                    <div class="col-sm-12">
+                                                        <div class="left col-xs-7">
+                                                            <h2>PHÒNG CÔNG TÁC SINH VIÊN</h2>
+                                                            <p><strong>Phòng: </strong> V.A105 </p>
+                                                            <ul class="list-unstyled">
+                                                                <li><i class="fa fa-envelope"></i> Email: congtacsinhvien@vku.udn.vn </li>
+                                                                <li><i class="fa fa-phone"></i> Phone: 0236.3.667.129 </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="right col-xs-5 text-center">
+                                                            <img src="images/img.jpg" alt="" class="img-circle img-responsive">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 bottom text-center">
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <p class="ratings">
+                                                                <a>4.0</a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star-o"></span></a>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <button type="button" class="btn btn-success btn-xs">
+                                                                <i class="fa fa-phone"></i> Liên hệ
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Department 3 -->
+                                            <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
+                                                <div class="well profile_view">
+                                                    <div class="col-sm-12">
+                                                        <div class="left col-xs-7">
+                                                            <h2>PHÒNG KẾ HOẠCH-TÀI CHÍNH</h2>
+                                                            <p><strong>Phòng: </strong> V.A107 </p>
+                                                            <ul class="list-unstyled">
+                                                                <li><i class="fa fa-envelope"></i> Email: kehoachtaichinh@vku.udn.vn </li>
+                                                                <li><i class="fa fa-phone"></i> Phone: 0236.3.667.114 </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="right col-xs-5 text-center">
+                                                            <img src="images/img.jpg" alt="" class="img-circle img-responsive">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 bottom text-center">
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <p class="ratings">
+                                                                <a>4.0</a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star-o"></span></a>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <button type="button" class="btn btn-success btn-xs">
+                                                                <i class="fa fa-phone"></i> Liên hệ
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Department 4 -->
+                                            <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
+                                                <div class="well profile_view">
+                                                    <div class="col-sm-12">
+                                                        <div class="left col-xs-7">
+                                                            <h2>PHÒNG KHẢO THÍ VÀ ĐẢM BẢO CHẤT LƯỢNG</h2>
+                                                            <p><strong>Phòng: </strong> V.A111 </p>
+                                                            <ul class="list-unstyled">
+                                                                <li><i class="fa fa-envelope"></i> Email: kt_dbcl@vku.udn.vn </li>
+                                                                <li><i class="fa fa-phone"></i> Phone: 0236.3.981.368 </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="right col-xs-5 text-center">
+                                                            <img src="images/img.jpg" alt="" class="img-circle img-responsive">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 bottom text-center">
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <p class="ratings">
+                                                                <a>4.0</a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star-o"></span></a>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <button type="button" class="btn btn-success btn-xs">
+                                                                <i class="fa fa-phone"></i> Liên hệ
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Department 5 -->
+                                            <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
+                                                <div class="well profile_view">
+                                                    <div class="col-sm-12">
+                                                        <div class="left col-xs-7">
+                                                            <h2>KÝ TÚC XÁ</h2>
+                                                            <p><strong>Phòng: </strong> Tầng 1. KTX1 </p>
+                                                            <ul class="list-unstyled">
+                                                                <li><i class="fa fa-envelope"></i> Email: kytucxa@vku.udn.vn </li>
+                                                                <li><i class="fa fa-phone"></i> Phone: 0236.3.962.965 </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="right col-xs-5 text-center">
+                                                            <img src="images/img.jpg" alt="" class="img-circle img-responsive">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-12 bottom text-center">
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <p class="ratings">
+                                                                <a>4.0</a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star"></span></a>
+                                                                <a href="#"><span class="fa fa-star-o"></span></a>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-6 emphasis">
+                                                            <button type="button" class="btn btn-success btn-xs">
+                                                                <i class="fa fa-phone"></i> Liên hệ
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- footer content -->
+            <footer style="margin-left: 0px !important;">
+                <div class="pull-right">
+                    ©Bản quyền thuộc về <a href="//daotao.vku.udn.vn">Trường ĐH CNTT&TT Việt - Hàn</a> - Đại học Đà Nẵng
+                </div>
+                <div class="clearfix"></div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <script>
+        // Lấy Mã SV và CCCD từ URL
+        let STUDENT_ID = '';
+        let ID_CARD = '';
+        let PARENT_PHONE = '';
+        const pathParts = window.location.pathname.split('/');
+        const query = new URLSearchParams(window.location.search);
+
+        if (pathParts[1] === 'phuhuynh' && pathParts[2] === 'index' && pathParts[3] && !pathParts[4]) {
+            PARENT_PHONE = pathParts[3];
+        } else if (pathParts[1] === 'phuhuynh' && (pathParts[2] === 'chitiet' || pathParts[2] === 'dashboard' || pathParts[2] === 'index') && pathParts[3] && pathParts[4]) {
+            STUDENT_ID = pathParts[3];
+            ID_CARD = pathParts[4];
+        } else if (query.get('studentId') && query.get('idCard')) {
+            STUDENT_ID = query.get('studentId');
+            ID_CARD = query.get('idCard');
+        } else if (query.get('parentPhone')) {
+            PARENT_PHONE = query.get('parentPhone');
+        }
+
+        function logout() {
+            window.location.href = '/login.html';
+        }
+
+        function formatCurrency(amount) {
+            if (!amount) return '0 đ';
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        function renderStudentInfo(student) {
+            if (!student) return;
+
+            const parentDisplayName = student.parent_name || student.full_name;
+
+            document.getElementById('greetingName').textContent = parentDisplayName;
+            document.getElementById('parentName').textContent = parentDisplayName;
+            document.getElementById('studentFullName').textContent = student.full_name;
+            document.getElementById('studentId').textContent = student.student_id;
+            document.getElementById('studentClass').textContent = student.class;
+            document.getElementById('studentMajor').textContent = student.major;
+            document.getElementById('studentDept').textContent = student.department;
+            document.getElementById('studentYear').textContent = student.academic_year;
+            document.getElementById('studentPhoto').src = student.photo_url || 'https://daotao.vku.udn.vn/uploads/sinhvien/22IT318.jpg';
+
+            // Prefer canonical student-id/id-card URL for detail page.
+            if (student.student_id) {
+                STUDENT_ID = student.student_id;
+            }
+            if (student.id_card) {
+                ID_CARD = student.id_card;
+            }
+            
+            if (STUDENT_ID && ID_CARD) {
+                document.getElementById('viewDetailLink').href = `/phuhuynh/chitiet/${STUDENT_ID}/${ID_CARD}`;
+            }
+
+            document.getElementById('studentInfoLoading').style.display = 'none';
+            document.getElementById('studentInfo').style.display = 'block';
+        }
+
+        function renderTuitionInfo(tuition, disciplineList, attendanceList) {
+            if (tuition) {
+                document.getElementById('paidAmount').textContent = formatCurrency(tuition.paid_amount);
+                document.getElementById('remainingAmount').textContent = tuition.remaining_amount > 0 ? 
+                    'Còn nợ: ' + formatCurrency(tuition.remaining_amount) : 
+                    'Đã đóng HP: ' + formatCurrency(tuition.paid_amount);
+            }
+
+            const rewards = (disciplineList || []).filter(d => d.type === 'reward');
+            const punishments = (disciplineList || []).filter(d => d.type === 'punishment');
+
+            document.getElementById('rewardInfo').textContent = rewards.length > 0 ? `Có (${rewards.length})` : 'Không';
+            document.getElementById('punishmentInfo').textContent = punishments.length > 0 ? `Có (${punishments.length})` : 'Không';
+
+            if (attendanceList && attendanceList.length > 0) {
+                document.getElementById('absencesCount').textContent = attendanceList[0].absences_count || 0;
+            }
+
+            document.getElementById('tuitionLoading').style.display = 'none';
+            document.getElementById('tuitionInfo').style.display = 'block';
+        }
+
+        async function initializeData() {
+            try {
+                if (!PARENT_PHONE && (!STUDENT_ID || !ID_CARD)) {
+                    document.getElementById('studentInfoLoading').innerHTML = '<div class="alert alert-warning">Vui lòng đăng nhập để xem thông tin.</div>';
+                    setTimeout(() => {
+                        window.location.href = '/login.html';
+                    }, 2000);
+                    return;
+                }
+
+                const detailApiUrl = PARENT_PHONE
+                    ? `/phuhuynh/api/chitiet-by-phone/${PARENT_PHONE}`
+                    : `/phuhuynh/api/chitiet/${STUDENT_ID}/${ID_CARD}`;
+
+                const detailRes = await fetch(detailApiUrl);
+                if (!detailRes.ok) {
+                    throw new Error('Không tìm thấy dữ liệu sinh viên.');
+                }
+
+                const payload = await detailRes.json();
+                renderStudentInfo(payload.student || {});
+                renderTuitionInfo(payload.tuition || {}, payload.discipline || [], payload.attendance || []);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('studentInfoLoading').innerHTML = '<div class="alert alert-danger">Lỗi: ' + error.message + '</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeData);
+    </script>
+</body>
+</html>

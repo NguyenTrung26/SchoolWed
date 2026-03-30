@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Hệ thống phụ huynh VKU - Trường Đại học CNTT&TT Việt - Hàn</title>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">   
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="https://daotao.vku.udn.vn/vendor/nprogress/nprogress.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="https://daotao.vku.udn.vn/vendor/iCheck/skins/flat/green.css" rel="stylesheet">
+	
+    <!-- bootstrap-progressbar -->
+    <link href="https://daotao.vku.udn.vn/vendor/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+    <!-- JQVMap -->
+    <link href="https://daotao.vku.udn.vn/vendor/jqvmap/dist/jqvmap.min.css" rel="stylesheet"/>
+    <!-- bootstrap-daterangepicker -->
+    <link href="https://daotao.vku.udn.vn/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <!-- Datatables -->
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
+    <link href="https://daotao.vku.udn.vn/vendor/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
+
+	
+    <!-- jquery -->
+    <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XT1XMM38R"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-9XT1XMM38R');
+    </script>
+
+
+    <!-- Custom Theme Style -->
+    <link href="https://daotao.vku.udn.vn/public/gv/build/css/custom.min.css" rel="stylesheet">
+      <!-- <meta name="csrf-token" content="3Xy6pKQlEQZEtRGUDY7S2QQe6z0Fg5ezyZTZZnX7" /> -->
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="/" class="site_title"><i class="fa fa-university"></i> <span>VKU!</span></a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <!-- menu profile quick info -->
+            <div class="profile clearfix">
+              <div class="profile_pic">
+                <img id="sidebarProfilePhoto" style="max-height:100px" src='https://daotao.vku.udn.vn/uploads/sinhvien/22IT313.jpg' alt="" class='img-circle profile_img'>
+              </div>
+              <div class="profile_info">
+                <span>Xin chào,</span>
+				                <h2 id="sidebarProfileName" title="">PHẠM MINH TRÍ</h2>
+				              </div>
+            </div>
+            <!-- /menu profile quick info -->
+
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                               <h3>TUẦN HỌC THỨ 33</h3>
+                <ul class="nav side-menu">
+                  
+				    
+                  <li title="tripm.22it@vku.udn.vn" ><a id="currentStudentDetailLink" href="#" ><i class="fa fa-street-view"></i>Thông tin chung</a></li>
+                  
+				 
+                  
+				  
+				  
+				  
+                  
+				
+				    <li><a href="https://daotao.vku.udn.vn/phuhuynh/tkb/22IT313/046204001193" ><i class="fa fa-credit-card"></i>Thời khóa biểu</a></li>
+            <li><a href="https://daotao.vku.udn.vn/phuhuynh/chuyencan/22IT313/046204001193" ><i class="fa fa-credit-card"></i>Tình trạng chuyên cần</a></li>
+            <li><a href="https://daotao.vku.udn.vn/phuhuynh/lichthi/22IT313/046204001193" ><i class="fa fa-credit-card"></i>Lịch thi</a></li>
+            
+            <li><a href="https://daotao.vku.udn.vn/phuhuynh/chuongtrinh/22IT313/046204001193" ><i class="fa fa-credit-card"></i>Chương trình học</a></li>
+					  <li><a href="https://daotao.vku.udn.vn/phuhuynh/api/hocphidanop?22IT313&046204001193" ><i class="fa fa-credit-card"></i>Học phí đã nộp</a></li>
+					  <li><a href="https://daotao.vku.udn.vn/phuhuynh/22IT313/046204001193/hoc-phi-sap-nop" ><i class="fa fa-book"></i>Học phí sắp tới</a></li>
+            <li><a href="https://daotao.vku.udn.vn/phuhuynh/22IT313/046204001193/dong-hoc-phi" ><i class="fa fa-book"></i>Đóng học phí</a></li>
+					  <li><a href="https://daotao.vku.udn.vn/phuhuynh/chungchi/22IT313/046204001193" ><i class="fa fa-book"></i>Chứng chỉ tốt nghiệp</a></li>
+				 
+				 
+				  
+                
+                </ul>
+              </div>
+            </div>
+            <!-- /sidebar menu -->
+			<div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Tùy chỉnh">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="FullScreen" onclick="openFullscreen()" >
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" href="/sv/quanlylop" title="Nhập vai trò quản lý lớp">
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Thoát" href="/sv/logout">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
+            </div>
+            
+            <!-- /menu footer buttons -->
+          </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <img id="topProfilePhoto" src="https://daotao.vku.udn.vn/uploads/sinhvien/22IT313.jpg" alt=""/><span id="topProfileName">PHẠM MINH TRÍ - 22IT313</span>
+                    <!-- <span class=" fa fa-angle-down"></span> -->
+                  </a>
+                  
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+                  
+                    <li><a href="/sv/logout/"><i class="fa fa-sign-out pull-right"></i> Thoát</a></li>
+                  </ul>
+                  
+                </li>
+				
+				
+				</ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+
+          <!-- top tiles -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="row">
+                <!-- page content -->
+        <!-- top tiles -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Thông tin chung
+
+                    </h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <p></p>
+
+					<header class="masthead"  id="info">
+						<section class="page-section">
+							<div class="container">
+								<div class="text-center">
+									<h2 class="section-heading text-uppercase">Thông tin sinh viên</h2>
+									
+								</div>
+																<div class="row">
+									<div class="row">
+										<div class="col-lg-4 text-center">
+											<div class="team-member">
+                        <img id="detailStudentPhoto" style="max-height:200px" class="rounded-circle" src="https://daotao.vku.udn.vn/uploads/sinhvien/22IT313.jpg" alt="..." />
+                        <h4 id="detailStudentName">PHẠM MINH TRÍ</h4>                               
+											</div>
+										</div>
+										<div class="col-lg-8">
+											<div class="team-member">
+												<table class="table" style="text-align: left">
+													<tbody>
+													  <tr>
+														<td>Mã Sinh viên:</td>
+                            <td id="detailStudentId">22IT313</td>
+													  </tr>
+													  <tr>
+														<td>Lớp sinh hoạt:</td>
+                            <td id="detailStudentClass">22SE1</td>
+													  </tr>
+													  <tr>
+														<td>Ngành/Chuyên ngành</td>
+                            <td id="detailStudentMajor">Chuyên ngành Công nghệ phần mềm (Kỹ sư)</td>
+													  </tr>
+													  <tr>
+														<td>Khoa:</td>
+                            <td id="detailStudentDept">Khoa Khoa học máy tính</td>
+													  </tr>
+													  <tr>
+													  <tr>
+														<td>Khóa học:</td>
+                            <td id="detailStudentAcademicYear">Khóa 2022</td>
+													  </tr>
+													  <tr>
+														<td>Ngày sinh:</td>
+                            <td id="detailStudentDob">2004-06-06</td>
+													  </tr>
+													  <tr>
+														<td>CMND/CCCD</td>
+                            <td id="detailStudentIdCard">046204001193</td>
+													  </tr>
+													  
+													 
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</section>
+					</header>
+				</div>
+				<div class="x_title">
+                    <h2>Thông tin học phí, chuyên cần, rèn luyện
+
+                    </h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+				<section class="page-section" id="about">
+            <div class="container">
+                              <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Thông tin sinh viên</th>
+                        <th id="tuitionStudentName">PHẠM MINH TRÍ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Tiền học phí đã nộp</td>
+                        <td id="tuitionPaidAmount">0 đ</td>
+                      </tr>
+                      <tr>
+                        <td>Tiền học phí còn nợ</td>
+                        <td id="tuitionRemainingAmount">Đã đóng HP: 7,964,800đ đ</td>
+                      </tr>
+                      <tr>
+                        <td>Số buổi vắng</td>
+                        <td id="tuitionAbsences">3</td>
+                      </tr>
+                      <tr>
+                        <td>Chi tiết buổi vắng</td>
+                        <td id="tuitionAbsenceDetail">...</td>
+                      </tr>
+                      <tr>
+                        <td>Khen thưởng</td>
+                        <td id="tuitionRewards">Không</td>
+                      </tr>
+                      <tr>
+                        <td>Kỷ luật</td>
+                        <td id="tuitionPunishments">Không</td>
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+            
+        </section>
+		</div>
+            </div>
+        </div>
+
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Điểm tổng kết</h2>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <div id="semesterGradesLoading" class="loading">
+            <p>Đang tải điểm tổng kết...</p>
+          </div>
+          <div class="table-responsive" id="semesterGradesWrap" style="display:none;">
+            <table class="table table-striped jambo_table bulk_action">
+              <thead>
+                <tr class="headings">
+                  <th>#</th>
+                  <th>Học kỳ</th>
+                  <th>Điểm 4</th>
+                  <th>Điểm 10</th>
+                  <th>Xếp loại</th>
+                  <th>Điểm 4 TL</th>
+                  <th>Điểm 10 TL</th>
+                </tr>
+              </thead>
+              <tbody id="semesterGradesBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Điểm các lớp học phần</h2>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <div id="courseGradesLoading" class="loading">
+            <p>Đang tải điểm chi tiết...</p>
+          </div>
+          <div class="table-responsive" id="courseGradesWrap" style="display:none;">
+            <table class="table table-striped jambo_table bulk_action">
+              <thead>
+                <tr class="headings">
+                  <th>#</th>
+                  <th>Học kỳ</th>
+                  <th>Tên lớp học phần</th>
+                  <th>Điểm CC</th>
+                  <th>Điểm BT</th>
+                  <th>Điểm GK</th>
+                  <th>Điểm CK</th>
+                  <th>Điểm T10</th>
+                  <th>Điểm Chữ</th>
+                </tr>
+              </thead>
+              <tbody id="courseGradesBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+		
+
+            </div>
+          </div>
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+          <footer>
+            <div class="pull-right">
+              ©Bản quyền thuộc về <a href="//daotao.vku.udn.vn">Trường ĐH CNTT&TT Việt - Hàn</a> - Đại học Đà Nẵng
+            </div>
+            <div class="clearfix"></div>
+          </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="https://daotao.vku.udn.vn/vendor/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="https://daotao.vku.udn.vn/vendor/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="https://daotao.vku.udn.vn/vendor/Chart.js/dist/Chart.min.js"></script>
+    <!-- gauge.js -->
+    <script src="https://daotao.vku.udn.vn/vendor/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="https://daotao.vku.udn.vn/vendor/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="https://daotao.vku.udn.vn/vendor/iCheck/icheck.min.js"></script>
+    <!-- Skycons -->
+    <script src="https://daotao.vku.udn.vn/vendor/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="https://daotao.vku.udn.vn/vendor/Flot/jquery.flot.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/Flot/jquery.flot.pie.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/Flot/jquery.flot.time.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/Flot/jquery.flot.stack.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="https://daotao.vku.udn.vn/vendor/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/flot-spline/js/jquery.flot.spline.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/flot.curvedlines/curvedLines.js"></script>
+    <!-- DateJS -->
+    <script src="https://daotao.vku.udn.vn/vendor/DateJS/build/date.js"></script>
+    <!-- JQVMap -->
+    <script src="https://daotao.vku.udn.vn/vendor/jqvmap/dist/jquery.vmap.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="https://daotao.vku.udn.vn/vendor/moment/min/moment.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <!-- Datatables -->
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/jszip/dist/jszip.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/pdfmake/build/pdfmake.min.js"></script>
+    <script src="https://daotao.vku.udn.vn/vendor/pdfmake/build/vfs_fonts.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="https://daotao.vku.udn.vn/public/gv/build/js/custom.min.js"></script>
+	<!-- Load Facebook SDK for JavaScript -->
+	    
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118234607-2"></script>
+<script>
+var elem = document.documentElement;
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) { /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE11 */
+    elem.msRequestFullscreen();
+  }
+}
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-118234607-2');
+</script>
+
+<script>
+  let STUDENT_ID = '';
+  let ID_CARD = '';
+  let PARENT_PHONE = '';
+
+  function parseParamsFromPath() {
+    const pathParts = window.location.pathname.split('/');
+
+    if (pathParts[1] === 'phuhuynh' && pathParts[2] === 'chitiet' && pathParts[3] && !pathParts[4]) {
+      PARENT_PHONE = pathParts[3];
+      const linkEl = document.getElementById('currentStudentDetailLink');
+      if (linkEl) {
+        linkEl.href = `/phuhuynh/chitiet/${PARENT_PHONE}`;
+      }
+    } else if (pathParts[1] === 'phuhuynh' && pathParts[2] === 'chitiet' && pathParts[3] && pathParts[4]) {
+      STUDENT_ID = pathParts[3];
+      ID_CARD = pathParts[4];
+      const linkEl = document.getElementById('currentStudentDetailLink');
+      if (linkEl) {
+        linkEl.href = `/phuhuynh/chitiet/${STUDENT_ID}/${ID_CARD}`;
+      }
+    }
+  }
+
+  function safeValue(value) {
+    return value === null || value === undefined || value === '' ? '-' : value;
+  }
+
+  function formatCurrency(amount) {
+    if (amount === null || amount === undefined) return '0 đ';
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(amount);
+  }
+
+  function formatDate(dateValue) {
+    if (!dateValue) return '-';
+    const date = new Date(dateValue);
+    return Number.isNaN(date.getTime()) ? safeValue(dateValue) : date.toLocaleDateString('vi-VN');
+  }
+
+  function renderStudentInfo(student) {
+    if (!student) return;
+
+    const displayName = safeValue(student.full_name);
+    const displayId = safeValue(student.student_id);
+    const displayPhoto = student.photo_url || 'https://daotao.vku.udn.vn/uploads/sinhvien/22IT313.jpg';
+
+    document.getElementById('sidebarProfilePhoto').src = displayPhoto;
+    document.getElementById('topProfilePhoto').src = displayPhoto;
+    document.getElementById('detailStudentPhoto').src = displayPhoto;
+
+    document.getElementById('sidebarProfileName').textContent = displayName;
+    document.getElementById('topProfileName').textContent = `${displayName} - ${displayId}`;
+    document.getElementById('detailStudentName').textContent = displayName;
+    document.getElementById('tuitionStudentName').textContent = displayName;
+
+    document.getElementById('detailStudentId').textContent = displayId;
+    document.getElementById('detailStudentClass').textContent = safeValue(student.class);
+    document.getElementById('detailStudentMajor').textContent = safeValue(student.major);
+    document.getElementById('detailStudentDept').textContent = safeValue(student.department);
+    document.getElementById('detailStudentAcademicYear').textContent = safeValue(student.academic_year);
+    document.getElementById('detailStudentDob').textContent = formatDate(student.date_of_birth);
+    document.getElementById('detailStudentIdCard').textContent = safeValue(student.id_card);
+  }
+
+  function renderTuitionAndDiscipline(tuition, attendance, discipline) {
+    const paidAmount = tuition ? formatCurrency(tuition.paid_amount || 0) : '0 đ';
+    const remainingAmount = tuition && Number(tuition.remaining_amount) > 0
+      ? `Còn nợ: ${formatCurrency(tuition.remaining_amount)}`
+      : `Đã đóng HP: ${formatCurrency(tuition ? tuition.paid_amount || 0 : 0)}`;
+
+    const attendanceList = Array.isArray(attendance) ? attendance : [];
+    const totalAbsences = attendanceList.reduce((sum, item) => sum + Number(item.absences_count || 0), 0);
+    const absenceDetail = attendanceList.length > 0
+      ? attendanceList.map(item => `${safeValue(item.semester_id)}: ${safeValue(item.absences_count)}`).join(' | ')
+      : 'Không có';
+
+    const disciplineList = Array.isArray(discipline) ? discipline : [];
+    const rewards = disciplineList.filter(item => item.type === 'reward');
+    const punishments = disciplineList.filter(item => item.type === 'punishment');
+
+    document.getElementById('tuitionPaidAmount').textContent = paidAmount;
+    document.getElementById('tuitionRemainingAmount').textContent = remainingAmount;
+    document.getElementById('tuitionAbsences').textContent = String(totalAbsences);
+    document.getElementById('tuitionAbsenceDetail').textContent = absenceDetail;
+    document.getElementById('tuitionRewards').textContent = rewards.length > 0 ? `Có (${rewards.length})` : 'Không';
+    document.getElementById('tuitionPunishments').textContent = punishments.length > 0 ? `Có (${punishments.length})` : 'Không';
+  }
+
+  function renderSemesterGrades(grades) {
+    const loadingEl = document.getElementById('semesterGradesLoading');
+    const wrapEl = document.getElementById('semesterGradesWrap');
+    const bodyEl = document.getElementById('semesterGradesBody');
+
+    bodyEl.innerHTML = '';
+
+    if (!grades || grades.length === 0) {
+      bodyEl.innerHTML = '<tr><td colspan="7" style="text-align:center;">Chưa có dữ liệu điểm tổng kết.</td></tr>';
+    } else {
+      grades.forEach((g, idx) => {
+        const row = `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${safeValue(g.semester_name)}</td>
+            <td>${safeValue(g.gpa_4)}</td>
+            <td>${safeValue(g.gpa_10)}</td>
+            <td>${safeValue(g.classification)}</td>
+            <td>${safeValue(g.cumulative_gpa_4)}</td>
+            <td>${safeValue(g.cumulative_gpa_10)}</td>
+          </tr>
+        `;
+        bodyEl.insertAdjacentHTML('beforeend', row);
+      });
+    }
+
+    loadingEl.style.display = 'none';
+    wrapEl.style.display = 'block';
+  }
+
+  function renderCourseGrades(grades) {
+    const loadingEl = document.getElementById('courseGradesLoading');
+    const wrapEl = document.getElementById('courseGradesWrap');
+    const bodyEl = document.getElementById('courseGradesBody');
+
+    bodyEl.innerHTML = '';
+
+    if (!grades || grades.length === 0) {
+      bodyEl.innerHTML = '<tr><td colspan="9" style="text-align:center;">Chưa có dữ liệu điểm chi tiết học phần.</td></tr>';
+    } else {
+      grades.forEach((g, idx) => {
+        const row = `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${safeValue(g.semester_name)}</td>
+            <td>${safeValue(g.course_name)}</td>
+            <td>${safeValue(g.attendance_score)}</td>
+            <td>${safeValue(g.assignment_score)}</td>
+            <td>${safeValue(g.midterm_score)}</td>
+            <td>${safeValue(g.final_score)}</td>
+            <td>${safeValue(g.final_score_10)}</td>
+            <td>${safeValue(g.letter_grade)}</td>
+          </tr>
+        `;
+        bodyEl.insertAdjacentHTML('beforeend', row);
+      });
+    }
+
+    loadingEl.style.display = 'none';
+    wrapEl.style.display = 'block';
+  }
+
+  async function initializeDetailGrades() {
+    try {
+      parseParamsFromPath();
+      if (!PARENT_PHONE && (!STUDENT_ID || !ID_CARD)) {
+        throw new Error('Không đọc được thông tin sinh viên từ URL.');
+      }
+
+      const detailApiUrl = PARENT_PHONE
+        ? `/phuhuynh/api/chitiet-by-phone/${PARENT_PHONE}`
+        : `/phuhuynh/api/chitiet/${STUDENT_ID}/${ID_CARD}`;
+
+      const res = await fetch(detailApiUrl);
+      if (!res.ok) {
+        throw new Error('Không tải được dữ liệu điểm chi tiết.');
+      }
+
+      const payload = await res.json();
+      renderStudentInfo(payload.student || {});
+      renderTuitionAndDiscipline(payload.tuition || null, payload.attendance || [], payload.discipline || []);
+      renderSemesterGrades(payload.semester_grades || []);
+      renderCourseGrades(payload.course_grades || []);
+    } catch (error) {
+      document.getElementById('semesterGradesLoading').innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+      document.getElementById('courseGradesLoading').innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initializeDetailGrades);
+</script>
+	
+  </body>
+</html>
