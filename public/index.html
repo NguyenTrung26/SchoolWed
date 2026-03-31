@@ -36,7 +36,7 @@
                         <ul class="nav navbar-nav navbar-right" style="padding-left: 0px !important; margin:0px !important">
                             <li class="">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                    Xin chào phụ huynh <b id="greetingName">Nguyễn Nam</b>!
+                                    Xin chào phụ huynh <b id="greetingName"></b>!
                                 </a>
                                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                                     <li><a href="javascript:void(0)" onclick="logout()"><i class="fa fa-sign-out pull-right"></i> Thoát</a></li>
@@ -62,7 +62,6 @@
                                 <div class="x_content">
                                     <div class="bs-example" data-example-id="simple-jumbotron">
                                         <div class="jumbotron" style="background-color: #f8f8f8; margin-bottom: 0;">
-                                            <h3>Xin chào phụ huynh, <span id="parentName">Nguyễn Nam</span>!</h3>
                                             <p>VKU - TỰ HÀO LÀ TRƯỜNG ĐẠI HỌC CÔNG LẬP QUỐC TẾ HÀNG ĐẦU VỀ ĐÀO TẠO, NGHIÊN CỨU CÔNG NGHỆ THÔNG TIN, TRUYỀN THÔNG VÀ KINH TẾ SỐ CỦA MIỀN TRUNG - TÂY NGUYÊN VÀ CẢ NƯỚC</p>
                                         </div>
                                     </div>
@@ -422,15 +421,33 @@
 
             const parentDisplayName = student.parent_name || student.full_name;
 
-            document.getElementById('greetingName').textContent = parentDisplayName;
-            document.getElementById('parentName').textContent = parentDisplayName;
-            document.getElementById('studentFullName').textContent = student.full_name;
-            document.getElementById('studentId').textContent = student.student_id;
-            document.getElementById('studentClass').textContent = student.class;
-            document.getElementById('studentMajor').textContent = student.major;
-            document.getElementById('studentDept').textContent = student.department;
-            document.getElementById('studentYear').textContent = student.academic_year;
-            document.getElementById('studentPhoto').src = student.photo_url || 'https://daotao.vku.udn.vn/uploads/sinhvien/22IT318.jpg';
+            if (document.getElementById('greetingName')) {
+                document.getElementById('greetingName').textContent = parentDisplayName;
+            }
+            if (document.getElementById('parentName')) {
+                document.getElementById('parentName').textContent = parentDisplayName;
+            }
+            if (document.getElementById('studentFullName')) {
+                document.getElementById('studentFullName').textContent = student.full_name;
+            }
+            if (document.getElementById('studentId')) {
+                document.getElementById('studentId').textContent = student.student_id;
+            }
+            if (document.getElementById('studentClass')) {
+                document.getElementById('studentClass').textContent = student.class;
+            }
+            if (document.getElementById('studentMajor')) {
+                document.getElementById('studentMajor').textContent = student.major;
+            }
+            if (document.getElementById('studentDept')) {
+                document.getElementById('studentDept').textContent = student.department;
+            }
+            if (document.getElementById('studentYear')) {
+                document.getElementById('studentYear').textContent = student.academic_year;
+            }
+            if (document.getElementById('studentPhoto')) {
+                document.getElementById('studentPhoto').src = student.photo_url || 'https://daotao.vku.udn.vn/uploads/sinhvien/22IT318.jpg';
+            }
 
             // Prefer canonical student-id/id-card URL for detail page.
             if (student.student_id) {
@@ -450,24 +467,38 @@
 
         function renderTuitionInfo(tuition, disciplineList, attendanceList) {
             if (tuition) {
-                document.getElementById('paidAmount').textContent = formatCurrency(tuition.paid_amount);
-                document.getElementById('remainingAmount').textContent = tuition.remaining_amount > 0 ? 
-                    'Còn nợ: ' + formatCurrency(tuition.remaining_amount) : 
-                    'Đã đóng HP: ' + formatCurrency(tuition.paid_amount);
+                if (document.getElementById('paidAmount')) {
+                    document.getElementById('paidAmount').textContent = formatCurrency(tuition.paid_amount);
+                }
+                if (document.getElementById('remainingAmount')) {
+                    document.getElementById('remainingAmount').textContent = tuition.remaining_amount > 0 ? 
+                        'Còn nợ: ' + formatCurrency(tuition.remaining_amount) : 
+                        'Đã đóng HP: ' + formatCurrency(tuition.paid_amount);
+                }
             }
 
             const rewards = (disciplineList || []).filter(d => d.type === 'reward');
             const punishments = (disciplineList || []).filter(d => d.type === 'punishment');
 
-            document.getElementById('rewardInfo').textContent = rewards.length > 0 ? `Có (${rewards.length})` : 'Không';
-            document.getElementById('punishmentInfo').textContent = punishments.length > 0 ? `Có (${punishments.length})` : 'Không';
-
-            if (attendanceList && attendanceList.length > 0) {
-                document.getElementById('absencesCount').textContent = attendanceList[0].absences_count || 0;
+            if (document.getElementById('rewardInfo')) {
+                document.getElementById('rewardInfo').textContent = rewards.length > 0 ? `Có (${rewards.length})` : 'Không';
+            }
+            if (document.getElementById('punishmentInfo')) {
+                document.getElementById('punishmentInfo').textContent = punishments.length > 0 ? `Có (${punishments.length})` : 'Không';
             }
 
-            document.getElementById('tuitionLoading').style.display = 'none';
-            document.getElementById('tuitionInfo').style.display = 'block';
+            if (attendanceList && attendanceList.length > 0) {
+                if (document.getElementById('absencesCount')) {
+                    document.getElementById('absencesCount').textContent = attendanceList[0].absences_count || 0;
+                }
+            }
+
+            if (document.getElementById('tuitionLoading')) {
+                document.getElementById('tuitionLoading').style.display = 'none';
+            }
+            if (document.getElementById('tuitionInfo')) {
+                document.getElementById('tuitionInfo').style.display = 'block';
+            }
         }
 
         async function initializeData() {
