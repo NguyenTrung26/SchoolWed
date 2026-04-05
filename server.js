@@ -118,19 +118,13 @@ app.post('/api/student', async (req, res) => {
         connection = await pool.getConnection();
         await connection.beginTransaction();
 
-        const [result] = await connection.query(`INSERT INTO students (student_id, full_name, date_of_birth, id_card, email, phone, photo_url, class, major, department, academic_year)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [student_id, full_name, date_of_birth, id_card, email, phone, photo_url, cls, major, department, academic_year]);
+        const [result] = await connection.query(`INSERT INTO students (student_id, full_name, date_of_birth, id_card, email, phone, photo_url, class, major, department, academic_year, parent_name, parent_phone, parent_password, parent_status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')`,
+            [student_id, full_name, date_of_birth, id_card, email, phone, photo_url, cls, major, department, academic_year, parent_name || `PH ${full_name}`, parent_phone || phone || student_id, parent_password || (id_card ? String(id_card).slice(-6) : student_id)]);
 
         const generatedParentPhone = parent_phone || phone || student_id;
         const generatedParentPassword = parent_password || (id_card ? String(id_card).slice(-6) : student_id);
         const generatedParentName = parent_name || `PH ${full_name}`;
-
-        await connection.query(
-            `INSERT INTO parent_accounts (student_id, parent_name, parent_phone, parent_password)
-             VALUES (?, ?, ?, ?)`,
-            [student_id, generatedParentName, generatedParentPhone, generatedParentPassword]
-        );
 
         await connection.commit();
         connection.release();
@@ -170,7 +164,7 @@ app.put('/api/student/:studentId', async (req, res) => {
 
         if (phone) {
             await connection.query(
-                `UPDATE parent_accounts
+                `UPDATE students
                  SET parent_phone = ?
                  WHERE student_id = ?`,
                 [phone, studentId]
@@ -253,14 +247,13 @@ app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
         const connection = await pool.getConnection();
-        
+
         const [accounts] = await connection.query(
-            `SELECT pa.student_id, pa.parent_phone, s.id_card
-             FROM parent_accounts pa
-             JOIN students s ON s.student_id = pa.student_id
-             WHERE pa.parent_phone = ?
-               AND pa.parent_password = ?
-               AND pa.status = 'active'`, 
+            `SELECT student_id, parent_phone, id_card
+             FROM students
+             WHERE parent_phone = ?
+               AND parent_password = ?
+               AND COALESCE(parent_status, 'active') = 'active'`,
             [username, password]
         );
         connection.release();
@@ -286,11 +279,10 @@ app.get('/phuhuynh/api/chitiet-by-phone/:parentPhone', async (req, res) => {
         const connection = await pool.getConnection();
 
         const [students] = await connection.query(
-            `SELECT s.*, pa.parent_name, pa.parent_phone
-             FROM parent_accounts pa
-             JOIN students s ON s.student_id = pa.student_id
-             WHERE pa.parent_phone = ?
-               AND pa.status = 'active'`,
+            `SELECT *
+             FROM students
+             WHERE parent_phone = ?
+               AND COALESCE(parent_status, 'active') = 'active'`,
             [parentPhone]
         );
 
@@ -358,10 +350,9 @@ app.get('/phuhuynh/api/chitiet/:studentId/:idCard', async (req, res) => {
         
         // Verify student exists with matching student_id and id_card
         const [students] = await connection.query(
-            `SELECT s.*, pa.parent_name, pa.parent_phone
-             FROM students s
-             LEFT JOIN parent_accounts pa ON pa.student_id = s.student_id
-             WHERE s.student_id = ? AND s.id_card = ?`, 
+            `SELECT *
+             FROM students
+             WHERE student_id = ? AND id_card = ?`,
             [studentId, idCard]
         );
         
@@ -432,11 +423,10 @@ app.get('/phuhuynh/index/:parentPhone(\\d+)', async (req, res) => {
         const connection = await pool.getConnection();
 
         const [rows] = await connection.query(
-            `SELECT pa.student_id, s.id_card
-             FROM parent_accounts pa
-             JOIN students s ON s.student_id = pa.student_id
-             WHERE pa.parent_phone = ?
-               AND pa.status = 'active'`,
+            `SELECT student_id, id_card
+             FROM students
+             WHERE parent_phone = ?
+               AND COALESCE(parent_status, 'active') = 'active'`,
             [parentPhone]
         );
 
@@ -464,14 +454,14 @@ app.get('/phuhuynh/index/:studentId/:idCard', async (req, res) => {
             [studentId, idCard]
         );
 
-        const [accounts] = await connection.query(
-            `SELECT parent_phone
-             FROM parent_accounts
-             WHERE student_id = ?
-               AND status = 'active'
-             LIMIT 1`,
-            [studentId]
-        );
+                const [accounts] = await connection.query(
+                        `SELECT parent_phone
+                         FROM students
+                         WHERE student_id = ?
+                             AND COALESCE(parent_status, 'active') = 'active'
+                         LIMIT 1`,
+                        [studentId]
+                );
         
         connection.release();
         
@@ -500,14 +490,14 @@ app.get('/phuhuynh/dashboard/:studentId/:idCard', async (req, res) => {
             [studentId, idCard]
         );
 
-        const [accounts] = await connection.query(
-            `SELECT parent_phone
-             FROM parent_accounts
-             WHERE student_id = ?
-               AND status = 'active'
-             LIMIT 1`,
-            [studentId]
-        );
+                const [accounts] = await connection.query(
+                        `SELECT parent_phone
+                         FROM students
+                         WHERE student_id = ?
+                             AND COALESCE(parent_status, 'active') = 'active'
+                         LIMIT 1`,
+                        [studentId]
+                );
 
         connection.release();
 
@@ -532,11 +522,10 @@ app.get('/phuhuynh/chitiet/:parentPhone(\\d+)', async (req, res) => {
         const connection = await pool.getConnection();
 
         const [rows] = await connection.query(
-            `SELECT pa.student_id, s.id_card
-             FROM parent_accounts pa
-             JOIN students s ON s.student_id = pa.student_id
-             WHERE pa.parent_phone = ?
-               AND pa.status = 'active'`,
+            `SELECT student_id, id_card
+             FROM students
+             WHERE parent_phone = ?
+               AND COALESCE(parent_status, 'active') = 'active'`,
             [parentPhone]
         );
 

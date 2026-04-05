@@ -521,6 +521,7 @@
                 }
 
                 const payload = await detailRes.json();
+                console.log('phuhuynh detail payload:', payload);
                 renderStudentInfo(payload.student || {});
                 renderTuitionInfo(payload.tuition || {}, payload.discipline || [], payload.attendance || []);
             } catch (error) {

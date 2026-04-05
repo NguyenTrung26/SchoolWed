@@ -1,4 +1,4 @@
--- Tạo bảng sinh viên
+-- Tạo bảng sinh viên (bao gồm thông tin phụ huynh)
 CREATE TABLE IF NOT EXISTS students (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_id TEXT UNIQUE NOT NULL,
@@ -13,6 +13,11 @@ CREATE TABLE IF NOT EXISTS students (
     department TEXT,
     academic_year TEXT,
     status TEXT DEFAULT 'active',
+    -- Thông tin phụ huynh
+    parent_name TEXT,
+    parent_phone TEXT,
+    parent_password TEXT,
+    parent_status TEXT DEFAULT 'active',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -103,15 +108,6 @@ CREATE TABLE IF NOT EXISTS discipline (
     FOREIGN KEY (student_id) REFERENCES students(student_id)
 );
 
--- Tạo bảng tài khoản phụ huynh (mỗi sinh viên có một tài khoản)
-CREATE TABLE IF NOT EXISTS parent_accounts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id TEXT UNIQUE NOT NULL,
-    parent_name TEXT,
-    parent_phone TEXT UNIQUE NOT NULL,
-    parent_password TEXT NOT NULL,
-    status TEXT DEFAULT 'active',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (student_id) REFERENCES students(student_id)
-);
+-- Bảng parent_accounts đã được gộp vào bảng students
+-- Các trường parent_name, parent_phone, parent_password, parent_status
+-- nay nằm trực tiếp trong bảng students.
