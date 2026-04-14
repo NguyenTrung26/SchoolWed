@@ -417,28 +417,58 @@ app.get('/phuhuynh/api/chitiet/:studentId/:idCard', async (req, res) => {
 });
 
 // Preferred route: /index/:parentPhone
-app.get('/phuhuynh/index/:parentPhone(\\d+)', async (req, res) => {
+app.get('/phuhuynh/index/:parentPhone(\\d+)', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Lightweight payload for index page to reduce initial loading time.
+app.get('/phuhuynh/api/index-by-phone/:parentPhone', async (req, res) => {
     try {
         const { parentPhone } = req.params;
+
         const connection = await pool.getConnection();
 
-        const [rows] = await connection.query(
-            `SELECT student_id, id_card
+        const [students] = await connection.query(
+            `SELECT *
              FROM students
              WHERE parent_phone = ?
                AND COALESCE(parent_status, 'active') = 'active'`,
             [parentPhone]
         );
 
-        connection.release();
-
-        if (!rows || rows.length === 0) {
-            return res.status(404).send('<h1>❌ Tài khoản phụ huynh không tồn tại hoặc đã bị khóa</h1>');
+        if (!students || students.length === 0) {
+            connection.release();
+            return res.status(404).json({ error: 'Parent account not found or inactive' });
         }
 
-        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+        const student = students[0];
+        const studentId = student.student_id;
+
+        const [tuition] = await connection.query(
+            'SELECT * FROM tuition_info WHERE student_id = ?',
+            [studentId]
+        );
+
+        const [attendance] = await connection.query(
+            'SELECT * FROM attendance WHERE student_id = ?',
+            [studentId]
+        );
+
+        const [discipline] = await connection.query(
+            'SELECT * FROM discipline WHERE student_id = ? ORDER BY date_issued DESC',
+            [studentId]
+        );
+
+        connection.release();
+
+        res.json({
+            student,
+            tuition: tuition[0] || null,
+            attendance: attendance || [],
+            discipline: discipline || []
+        });
     } catch (error) {
-        res.status(500).send(`<h1>❌ Lỗi: ${error.message}</h1>`);
+        res.status(500).json({ error: error.message });
     }
 });
 
