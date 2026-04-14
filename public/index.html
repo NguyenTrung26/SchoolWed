@@ -86,17 +86,17 @@
                                                 <div class="well profile_view">
                                                     <div class="col-sm-12">
                                                         <div class="left col-xs-7">
-                                                            <h4><strong id="studentFullName">NGUYỄN TRUNG</strong></h4>
-                                                            <p>Mã Sinh viên: <strong id="studentId">22IT318</strong></p>
+                                                            <h4><strong id="studentFullName">-</strong></h4>
+                                                            <p>Mã Sinh viên: <strong id="studentId">-</strong></p>
                                                             <ul class="list-unstyled">
-                                                                <li><i class="fa fa-bank"></i> Lớp sinh hoạt: <strong id="studentClass">22SE1</strong> </li>
-                                                                <li><i class="fa fa-graduation-cap"></i> Ngành: <strong id="studentMajor">Chuyên ngành Công nghệ phần mềm (Kỹ sư)</strong> </li>
+                                                                <li><i class="fa fa-bank"></i> Lớp sinh hoạt: <strong id="studentClass">-</strong> </li>
+                                                                <li><i class="fa fa-graduation-cap"></i> Ngành: <strong id="studentMajor">-</strong> </li>
                                                                 <li><i class="fa fa-user"></i> Khoa: <strong id="studentDept">-</strong> </li>
                                                                 <li><i class="fa fa-info"></i> Khóa học: <strong id="studentYear">-</strong> </li>
                                                             </ul>
                                                         </div>
                                                         <div class="right col-xs-5 text-center">
-                                                            <img id="studentPhoto" src="https://daotao.vku.udn.vn/uploads/sinhvien/22IT318.jpg" alt="" class="img-circle img-responsive">
+                                                            <img id="studentPhoto" src="images/img.jpg" alt="Ảnh sinh viên" class="img-circle img-responsive">
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-12 bottom text-center">
@@ -428,25 +428,25 @@
                 document.getElementById('parentName').textContent = parentDisplayName;
             }
             if (document.getElementById('studentFullName')) {
-                document.getElementById('studentFullName').textContent = student.full_name;
+                document.getElementById('studentFullName').textContent = student.full_name || '-';
             }
             if (document.getElementById('studentId')) {
-                document.getElementById('studentId').textContent = student.student_id;
+                document.getElementById('studentId').textContent = student.student_id || '-';
             }
             if (document.getElementById('studentClass')) {
-                document.getElementById('studentClass').textContent = student.class;
+                document.getElementById('studentClass').textContent = student.class || '-';
             }
             if (document.getElementById('studentMajor')) {
-                document.getElementById('studentMajor').textContent = student.major;
+                document.getElementById('studentMajor').textContent = student.major || '-';
             }
             if (document.getElementById('studentDept')) {
-                document.getElementById('studentDept').textContent = student.department;
+                document.getElementById('studentDept').textContent = student.department || '-';
             }
             if (document.getElementById('studentYear')) {
-                document.getElementById('studentYear').textContent = student.academic_year;
+                document.getElementById('studentYear').textContent = student.academic_year || '-';
             }
             if (document.getElementById('studentPhoto')) {
-                document.getElementById('studentPhoto').src = student.photo_url || 'https://daotao.vku.udn.vn/uploads/sinhvien/22IT318.jpg';
+                document.getElementById('studentPhoto').src = student.photo_url || 'images/img.jpg';
             }
 
             // Prefer canonical student-id/id-card URL for detail page.
