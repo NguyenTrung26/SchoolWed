@@ -501,8 +501,17 @@
             }
         }
 
-        async function initializeData() {
+        function initializeData() {
             try {
+                // Check if data is already injected by server
+                if (window.INITIAL_DATA) {
+                    console.log('Using server-side injected data');
+                    renderStudentInfo(window.INITIAL_DATA.student || {});
+                    renderTuitionInfo(window.INITIAL_DATA.tuition || {}, window.INITIAL_DATA.discipline || [], window.INITIAL_DATA.attendance || []);
+                    return;
+                }
+
+                // Fallback: fetch from API if no injected data (for direct API calls)
                 if (!PARENT_PHONE && (!STUDENT_ID || !ID_CARD)) {
                     document.getElementById('studentInfoLoading').innerHTML = '<div class="alert alert-warning">Vui lòng đăng nhập để xem thông tin.</div>';
                     setTimeout(() => {
@@ -515,15 +524,20 @@
                     ? `/phuhuynh/api/index-by-phone/${PARENT_PHONE}`
                     : `/phuhuynh/api/chitiet/${STUDENT_ID}/${ID_CARD}`;
 
-                const detailRes = await fetch(detailApiUrl);
-                if (!detailRes.ok) {
-                    throw new Error('Không tìm thấy dữ liệu sinh viên.');
-                }
-
-                const payload = await detailRes.json();
-                console.log('phuhuynh detail payload:', payload);
-                renderStudentInfo(payload.student || {});
-                renderTuitionInfo(payload.tuition || {}, payload.discipline || [], payload.attendance || []);
+                fetch(detailApiUrl)
+                    .then(res => {
+                        if (!res.ok) throw new Error('Không tìm thấy dữ liệu sinh viên.');
+                        return res.json();
+                    })
+                    .then(payload => {
+                        console.log('phuhuynh detail payload:', payload);
+                        renderStudentInfo(payload.student || {});
+                        renderTuitionInfo(payload.tuition || {}, payload.discipline || [], payload.attendance || []);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        document.getElementById('studentInfoLoading').innerHTML = '<div class="alert alert-danger">Lỗi: ' + error.message + '</div>';
+                    });
             } catch (error) {
                 console.error(error);
                 document.getElementById('studentInfoLoading').innerHTML = '<div class="alert alert-danger">Lỗi: ' + error.message + '</div>';

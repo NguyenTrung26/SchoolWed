@@ -416,9 +416,67 @@ app.get('/phuhuynh/api/chitiet/:studentId/:idCard', async (req, res) => {
     }
 });
 
-// Preferred route: /index/:parentPhone
-app.get('/phuhuynh/index/:parentPhone(\\d+)', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Preferred route: /index/:parentPhone - with server-side data injection
+app.get('/phuhuynh/index/:parentPhone(\\d+)', async (req, res) => {
+    try {
+        const { parentPhone } = req.params;
+        const connection = await pool.getConnection();
+
+        // Verify parent account exists
+        const [students] = await connection.query(
+            `SELECT *
+             FROM students
+             WHERE parent_phone = ?
+               AND COALESCE(parent_status, 'active') = 'active'`,
+            [parentPhone]
+        );
+
+        if (!students || students.length === 0) {
+            connection.release();
+            return res.status(404).send('<h1>❌ Tài khoản phụ huynh không tồn tại hoặc đã bị khóa</h1>');
+        }
+
+        const student = students[0];
+        const studentId = student.student_id;
+
+        // Get tuition & discipline info (lightweight for index)
+        const [tuition] = await connection.query(
+            'SELECT * FROM tuition_info WHERE student_id = ?',
+            [studentId]
+        );
+
+        const [attendance] = await connection.query(
+            'SELECT * FROM attendance WHERE student_id = ?',
+            [studentId]
+        );
+
+        const [discipline] = await connection.query(
+            'SELECT * FROM discipline WHERE student_id = ? ORDER BY date_issued DESC',
+            [studentId]
+        );
+
+        connection.release();
+
+        // Read index.html and inject data
+        const fs = require('fs').promises;
+        let html = await fs.readFile(path.join(__dirname, 'public', 'index.html'), 'utf8');
+
+        // Inject data into window object
+        const initialData = {
+            student,
+            tuition: tuition[0] || null,
+            attendance: attendance || [],
+            discipline: discipline || []
+        };
+
+        // Insert data injection right before closing body tag
+        const dataScript = `<script>window.INITIAL_DATA = ${JSON.stringify(initialData)};</script>`;
+        html = html.replace('</body>', dataScript + '\n</body>');
+
+        res.send(html);
+    } catch (error) {
+        res.status(500).send(`<h1>❌ Lỗi: ${error.message}</h1>`);
+    }
 });
 
 // Lightweight payload for index page to reduce initial loading time.
