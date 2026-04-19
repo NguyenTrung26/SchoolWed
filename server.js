@@ -520,7 +520,7 @@ app.get('/phuhuynh/index/:parentPhone(\\d+)', requireParentAuthPage, async (req,
 
         if (req.parentAuth.parentPhone !== parentPhone) {
             return forceReauthWithAlert(res, 'Ban vua thay doi duong dan de truy cap tai khoan khac. Vui long dang nhap lai.');
-        }
+        }//
 
         const connection = await pool.getConnection();
 
