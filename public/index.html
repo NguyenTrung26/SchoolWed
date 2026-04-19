@@ -398,8 +398,14 @@
             PARENT_PHONE = query.get('parentPhone');
         }
 
-        function logout() {
-            window.location.href = '/login.html';
+        async function logout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                window.location.href = '/login.html';
+            }
         }
 
         function formatCurrency(amount) {
