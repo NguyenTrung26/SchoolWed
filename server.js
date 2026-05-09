@@ -2,18 +2,71 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const { pool, initializeDatabase } = require('./mysql-db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+const AUTH_COOKIE_NAME = 'parent_session';
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+function parseCookies(req) {
+    const header = req.headers.cookie || '';
+    return header.split(';').map(cookie => cookie.trim()).filter(Boolean).reduce((acc, part) => {
+        const index = part.indexOf('=');
+        if (index === -1) return acc;
+        const key = part.slice(0, index);
+        const value = decodeURIComponent(part.slice(index + 1));
+        acc[key] = value;
+        return acc;
+    }, {});
+}
+
+function buildAuthCookie(token) {
+    const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+    return `${AUTH_COOKIE_NAME}=${encodeURIComponent(token)}; HttpOnly; Path=/; Max-Age=43200; SameSite=Lax${secure}`;
+}
+
+function clearAuthCookie() {
+    const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+    return `${AUTH_COOKIE_NAME}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax${secure}`;
+}
+
+function requireParentAuth(req, res, next) {
+    try {
+        const token = parseCookies(req)[AUTH_COOKIE_NAME];
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        req.parentAuth = jwt.verify(token, JWT_SECRET);
+        return next();
+    } catch (error) {
+        return res.status(401).json({ error: 'Invalid session' });
+    }
+}
+
+function requireParentAuthPage(req, res, next) {
+    try {
+        const token = parseCookies(req)[AUTH_COOKIE_NAME];
+        if (!token) {
+            return res.redirect('/login.html');
+        }
+
+        req.parentAuth = jwt.verify(token, JWT_SECRET);
+        return next();
+    } catch (error) {
+        return res.redirect('/login.html');
+    }
+}
 
 // Initialize database on startup
 initializeDatabase().catch(err => {
@@ -260,6 +313,16 @@ app.post('/api/login', async (req, res) => {
         
         if (accounts.length > 0) {
             const account = accounts[0];
+            const token = jwt.sign(
+                {
+                    parentPhone: account.parent_phone,
+                    studentId: account.student_id
+                },
+                JWT_SECRET,
+                { expiresIn: '12h' }
+            );
+
+            res.setHeader('Set-Cookie', buildAuthCookie(token));
             res.json({ success: true, redirectUrl: `/phuhuynh/index/${account.parent_phone}` });
         } else {
             res.status(401).json({ success: false, message: "Sai số điện thoại hoặc mật khẩu phụ huynh!" });
@@ -271,19 +334,25 @@ app.post('/api/login', async (req, res) => {
 
 // Compatibility logout route used by old detail.html links
 app.get('/sv/logout', (req, res) => {
+    res.setHeader('Set-Cookie', clearAuthCookie());
     res.redirect('/login.html');
 });
 
 app.get('/sv/logout/', (req, res) => {
+    res.setHeader('Set-Cookie', clearAuthCookie());
     res.redirect('/login.html');
 });
 
 // ==================== PHUHUYNH Routes ====================
 
 // Get student details JSON by parent phone - new preferred API
-app.get('/phuhuynh/api/chitiet-by-phone/:parentPhone', async (req, res) => {
+app.get('/phuhuynh/api/chitiet-by-phone/:parentPhone', requireParentAuth, async (req, res) => {
     try {
         const { parentPhone } = req.params;
+
+        if (req.parentAuth.parentPhone !== parentPhone) {
+            return res.status(403).json({ error: 'Forbidden' });
+        }
 
         const connection = await pool.getConnection();
 
@@ -351,7 +420,7 @@ app.get('/phuhuynh/api/chitiet-by-phone/:parentPhone', async (req, res) => {
 });
 
 // Get student details JSON - for API
-app.get('/phuhuynh/api/chitiet/:studentId/:idCard', async (req, res) => {
+app.get('/phuhuynh/api/chitiet/:studentId/:idCard', requireParentAuth, async (req, res) => {
     try {
         const { studentId, idCard } = req.params;
         
@@ -364,10 +433,15 @@ app.get('/phuhuynh/api/chitiet/:studentId/:idCard', async (req, res) => {
              WHERE student_id = ? AND id_card = ?`,
             [studentId, idCard]
         );
-        
+
         if (!students || students.length === 0) {
             connection.release();
             return res.status(404).json({ error: 'Student not found or ID card does not match' });
+        }
+
+        if (students[0].parent_phone !== req.parentAuth.parentPhone) {
+            connection.release();
+            return res.status(403).json({ error: 'Forbidden' });
         }
         
         const student = students[0];
@@ -426,9 +500,13 @@ app.get('/phuhuynh/api/chitiet/:studentId/:idCard', async (req, res) => {
 });
 
 // Preferred route: /index/:parentPhone
-app.get('/phuhuynh/index/:parentPhone(\\d+)', async (req, res) => {
+app.get('/phuhuynh/index/:parentPhone(\\d+)', requireParentAuthPage, async (req, res) => {
     try {
         const { parentPhone } = req.params;
+
+        if (req.parentAuth.parentPhone !== parentPhone) {
+            return res.redirect('/login.html');
+        }
         const connection = await pool.getConnection();
 
         const [rows] = await connection.query(
@@ -452,7 +530,7 @@ app.get('/phuhuynh/index/:parentPhone(\\d+)', async (req, res) => {
 });
 
 // Backward compatibility for old links: redirect to phone-based dashboard URL
-app.get('/phuhuynh/index/:studentId/:idCard', async (req, res) => {
+app.get('/phuhuynh/index/:studentId/:idCard', requireParentAuthPage, async (req, res) => {
     try {
         const { studentId, idCard } = req.params;
         const connection = await pool.getConnection();
@@ -477,6 +555,10 @@ app.get('/phuhuynh/index/:studentId/:idCard', async (req, res) => {
             return res.status(404).send('<h1>❌ Sinh viên không tìm thấy hoặc CCCD không khớp</h1>');
         }
 
+            if (students[0].parent_phone !== req.parentAuth.parentPhone) {
+                return res.redirect('/login.html');
+            }
+
         if (!accounts || accounts.length === 0) {
             return res.status(404).send('<h1>❌ Không tìm thấy tài khoản phụ huynh đang hoạt động</h1>');
         }
@@ -488,7 +570,7 @@ app.get('/phuhuynh/index/:studentId/:idCard', async (req, res) => {
 });
 
 // Backward compatibility for old dashboard links
-app.get('/phuhuynh/dashboard/:studentId/:idCard', async (req, res) => {
+app.get('/phuhuynh/dashboard/:studentId/:idCard', requireParentAuthPage, async (req, res) => {
     try {
         const { studentId, idCard } = req.params;
         const connection = await pool.getConnection();
@@ -513,6 +595,10 @@ app.get('/phuhuynh/dashboard/:studentId/:idCard', async (req, res) => {
             return res.status(404).send('<h1>❌ Sinh viên không tìm thấy hoặc CCCD không khớp</h1>');
         }
 
+        if (students[0].parent_phone !== req.parentAuth.parentPhone) {
+            return res.redirect('/login.html');
+        }
+
         if (!accounts || accounts.length === 0) {
             return res.status(404).send('<h1>❌ Không tìm thấy tài khoản phụ huynh đang hoạt động</h1>');
         }
@@ -524,9 +610,13 @@ app.get('/phuhuynh/dashboard/:studentId/:idCard', async (req, res) => {
 });
 
 // Phone-based detail route kept for compatibility: redirect to canonical student/id-card URL
-app.get('/phuhuynh/chitiet/:parentPhone(\\d+)', async (req, res) => {
+app.get('/phuhuynh/chitiet/:parentPhone(\\d+)', requireParentAuthPage, async (req, res) => {
     try {
         const { parentPhone } = req.params;
+
+        if (req.parentAuth.parentPhone !== parentPhone) {
+            return res.redirect('/login.html');
+        }
 
         const connection = await pool.getConnection();
 
@@ -551,7 +641,7 @@ app.get('/phuhuynh/chitiet/:parentPhone(\\d+)', async (req, res) => {
 });
 
 // Canonical route: /chitiet/:studentId/:idCard
-app.get('/phuhuynh/chitiet/:studentId/:idCard', async (req, res) => {
+app.get('/phuhuynh/chitiet/:studentId/:idCard', requireParentAuthPage, async (req, res) => {
     try {
         const { studentId, idCard } = req.params;
         const connection = await pool.getConnection();
@@ -566,6 +656,10 @@ app.get('/phuhuynh/chitiet/:studentId/:idCard', async (req, res) => {
         
         if (!students || students.length === 0) {
             return res.status(404).send('<h1>❌ Sinh viên không tìm thấy hoặc CCCD không khớp</h1>');
+        }
+
+        if (students[0].parent_phone !== req.parentAuth.parentPhone) {
+            return res.redirect('/login.html');
         }
 
         res.sendFile(path.join(__dirname, 'public', 'detail.html'));

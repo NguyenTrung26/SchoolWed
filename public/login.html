@@ -303,7 +303,6 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    localStorage.setItem('authToken', data.token); // Lưu token như thẻ vào cổng
                     window.location.href = data.redirectUrl; // Tự động nhảy qua trang bảng điểm
                 } else {
                     errorMsg.textContent = data.message || "Đăng nhập thất bại!";
