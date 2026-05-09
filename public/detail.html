@@ -449,9 +449,29 @@ function openFullscreen() {
   let STUDENT_ID = '';
   let ID_CARD = '';
   let PARENT_PHONE = '';
+  const query = new URLSearchParams(window.location.search);
 
   function parseParamsFromPath() {
     const pathParts = window.location.pathname.split('/');
+
+    if (query.get('parentPhone')) {
+      PARENT_PHONE = query.get('parentPhone');
+      const linkEl = document.getElementById('currentStudentDetailLink');
+      if (linkEl) {
+        linkEl.href = `/detail.html?parentPhone=${encodeURIComponent(PARENT_PHONE)}`;
+      }
+      return;
+    }
+
+    if (query.get('studentId') && query.get('idCard')) {
+      STUDENT_ID = query.get('studentId');
+      ID_CARD = query.get('idCard');
+      const linkEl = document.getElementById('currentStudentDetailLink');
+      if (linkEl) {
+        linkEl.href = `/detail.html?studentId=${encodeURIComponent(STUDENT_ID)}&idCard=${encodeURIComponent(ID_CARD)}`;
+      }
+      return;
+    }
 
     if (pathParts[1] === 'phuhuynh' && pathParts[2] === 'chitiet' && pathParts[3] && !pathParts[4]) {
       PARENT_PHONE = pathParts[3];

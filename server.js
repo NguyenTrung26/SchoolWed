@@ -2,96 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const { pool, initializeDatabase } = require('./mysql-db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
-const AUTH_COOKIE_NAME = 'parent_session';
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-function parseCookies(req) {
-    const header = req.headers.cookie || '';
-    return header
-        .split(';')
-        .map(cookie => cookie.trim())
-        .filter(Boolean)
-        .reduce((acc, part) => {
-            const index = part.indexOf('=');
-            if (index === -1) return acc;
-            const key = part.slice(0, index);
-            const value = decodeURIComponent(part.slice(index + 1));
-            acc[key] = value;
-            return acc;
-        }, {});
-}
-
-function buildAuthCookie(token) {
-    const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
-    return `${AUTH_COOKIE_NAME}=${encodeURIComponent(token)}; HttpOnly; Path=/; Max-Age=43200; SameSite=Lax${secure}`;
-}
-
-function clearAuthCookie() {
-    const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
-    return `${AUTH_COOKIE_NAME}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax${secure}`;
-}
-
-function forceReauthWithAlert(res, message) {
-    const safeMessage = JSON.stringify(message || 'Phat hien truy cap khong hop le. Vui long dang nhap lai.');
-    res.setHeader('Set-Cookie', clearAuthCookie());
-    return res.status(403).send(`<!DOCTYPE html>
-<html lang="vi">
-<head><meta charset="utf-8"><title>Yeu cau dang nhap lai</title></head>
-<body>
-<script>
-alert(${safeMessage});
-window.location.href = '/login.html';
-</script>
-</body>
-</html>`);
-}
-
-function requireParentAuth(req, res, next) {
-    try {
-        const cookies = parseCookies(req);
-        const token = cookies[AUTH_COOKIE_NAME];
-
-        if (!token) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        const payload = jwt.verify(token, JWT_SECRET);
-        req.parentAuth = payload;
-        next();
-    } catch (error) {
-        return res.status(401).json({ error: 'Invalid session' });
-    }
-}
-
-function requireParentAuthPage(req, res, next) {
-    try {
-        const cookies = parseCookies(req);
-        const token = cookies[AUTH_COOKIE_NAME];
-
-        if (!token) {
-            return res.redirect('/login.html');
-        }
-
-        const payload = jwt.verify(token, JWT_SECRET);
-        req.parentAuth = payload;
-        next();
-    } catch (error) {
-        return res.redirect('/login.html');
-    }
-}
 
 // Initialize database on startup
 initializeDatabase().catch(err => {
@@ -338,17 +260,7 @@ app.post('/api/login', async (req, res) => {
         
         if (accounts.length > 0) {
             const account = accounts[0];
-            const token = jwt.sign(
-                {
-                    parentPhone: account.parent_phone,
-                    studentId: account.student_id
-                },
-                JWT_SECRET,
-                { expiresIn: '12h' }
-            );
-
-            res.setHeader('Set-Cookie', buildAuthCookie(token));
-            res.json({ success: true, redirectUrl: `/phuhuynh/index/${account.parent_phone}` });
+            res.json({ success: true, redirectUrl: `/index.html?parentPhone=${encodeURIComponent(account.parent_phone)}` });
         } else {
             res.status(401).json({ success: false, message: "Sai số điện thoại hoặc mật khẩu phụ huynh!" });
         }
@@ -357,21 +269,21 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// ==================== PHUHUYNH Routes ====================
-
-app.post('/api/logout', (req, res) => {
-    res.setHeader('Set-Cookie', clearAuthCookie());
-    res.json({ success: true });
+// Compatibility logout route used by old detail.html links
+app.get('/sv/logout', (req, res) => {
+    res.redirect('/login.html');
 });
 
+app.get('/sv/logout/', (req, res) => {
+    res.redirect('/login.html');
+});
+
+// ==================== PHUHUYNH Routes ====================
+
 // Get student details JSON by parent phone - new preferred API
-app.get('/phuhuynh/api/chitiet-by-phone/:parentPhone', requireParentAuth, async (req, res) => {
+app.get('/phuhuynh/api/chitiet-by-phone/:parentPhone', async (req, res) => {
     try {
         const { parentPhone } = req.params;
-
-        if (req.parentAuth.parentPhone !== parentPhone) {
-            return res.status(403).json({ error: 'Forbidden' });
-        }
 
         const connection = await pool.getConnection();
 
@@ -439,7 +351,7 @@ app.get('/phuhuynh/api/chitiet-by-phone/:parentPhone', requireParentAuth, async 
 });
 
 // Get student details JSON - for API
-app.get('/phuhuynh/api/chitiet/:studentId/:idCard', requireParentAuth, async (req, res) => {
+app.get('/phuhuynh/api/chitiet/:studentId/:idCard', async (req, res) => {
     try {
         const { studentId, idCard } = req.params;
         
@@ -449,8 +361,8 @@ app.get('/phuhuynh/api/chitiet/:studentId/:idCard', requireParentAuth, async (re
         const [students] = await connection.query(
             `SELECT *
              FROM students
-             WHERE student_id = ? AND id_card = ? AND parent_phone = ? AND COALESCE(parent_status, 'active') = 'active'`,
-            [studentId, idCard, req.parentAuth.parentPhone]
+             WHERE student_id = ? AND id_card = ?`,
+            [studentId, idCard]
         );
         
         if (!students || students.length === 0) {
@@ -513,19 +425,13 @@ app.get('/phuhuynh/api/chitiet/:studentId/:idCard', requireParentAuth, async (re
     }
 });
 
-// Preferred route: /index/:parentPhone - with server-side data injection
-app.get('/phuhuynh/index/:parentPhone(\\d+)', requireParentAuthPage, async (req, res) => {
+// Preferred route: /index/:parentPhone
+app.get('/phuhuynh/index/:parentPhone(\\d+)', async (req, res) => {
     try {
         const { parentPhone } = req.params;
-
-        if (req.parentAuth.parentPhone !== parentPhone) {
-            return forceReauthWithAlert(res, 'Ban vua thay doi duong dan de truy cap tai khoan khac. Vui long dang nhap lai.');
-        }//
-
         const connection = await pool.getConnection();
 
-        // Verify parent account exists
-        const [students] = await connection.query(
+        const [rows] = await connection.query(
             `SELECT *
              FROM students
              WHERE parent_phone = ?
@@ -533,135 +439,42 @@ app.get('/phuhuynh/index/:parentPhone(\\d+)', requireParentAuthPage, async (req,
             [parentPhone]
         );
 
-        if (!students || students.length === 0) {
-            connection.release();
+        connection.release();
+
+        if (!rows || rows.length === 0) {
             return res.status(404).send('<h1>❌ Tài khoản phụ huynh không tồn tại hoặc đã bị khóa</h1>');
         }
 
-        const student = students[0];
-        const studentId = student.student_id;
-
-        // Get tuition & discipline info (lightweight for index)
-        const [tuition] = await connection.query(
-            'SELECT * FROM tuition_info WHERE student_id = ?',
-            [studentId]
-        );
-
-        const [attendance] = await connection.query(
-            'SELECT * FROM attendance WHERE student_id = ?',
-            [studentId]
-        );
-
-        const [discipline] = await connection.query(
-            'SELECT * FROM discipline WHERE student_id = ? ORDER BY date_issued DESC',
-            [studentId]
-        );
-
-        connection.release();
-
-        // Read index.html and inject data
-        const fs = require('fs').promises;
-        let html = await fs.readFile(path.join(__dirname, 'public', 'index.html'), 'utf8');
-
-        // Inject data into window object
-        const initialData = {
-            student,
-            tuition: tuition[0] || null,
-            attendance: attendance || [],
-            discipline: discipline || []
-        };
-
-        // Insert data injection right before closing body tag
-        const dataScript = `<script>window.INITIAL_DATA = ${JSON.stringify(initialData)};</script>`;
-        html = html.replace('</body>', dataScript + '\n</body>');
-
-        res.send(html);
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
     } catch (error) {
         res.status(500).send(`<h1>❌ Lỗi: ${error.message}</h1>`);
     }
 });
 
-// Lightweight payload for index page to reduce initial loading time.
-app.get('/phuhuynh/api/index-by-phone/:parentPhone', requireParentAuth, async (req, res) => {
-    try {
-        const { parentPhone } = req.params;
-
-        if (req.parentAuth.parentPhone !== parentPhone) {
-            return res.status(403).json({ error: 'Forbidden' });
-        }
-
-        const connection = await pool.getConnection();
-
-        const [students] = await connection.query(
-            `SELECT *
-             FROM students
-             WHERE parent_phone = ?
-               AND COALESCE(parent_status, 'active') = 'active'`,
-            [parentPhone]
-        );
-
-        if (!students || students.length === 0) {
-            connection.release();
-            return res.status(404).json({ error: 'Parent account not found or inactive' });
-        }
-
-        const student = students[0];
-        const studentId = student.student_id;
-
-        const [tuition] = await connection.query(
-            'SELECT * FROM tuition_info WHERE student_id = ?',
-            [studentId]
-        );
-
-        const [attendance] = await connection.query(
-            'SELECT * FROM attendance WHERE student_id = ?',
-            [studentId]
-        );
-
-        const [discipline] = await connection.query(
-            'SELECT * FROM discipline WHERE student_id = ? ORDER BY date_issued DESC',
-            [studentId]
-        );
-
-        connection.release();
-
-        res.json({
-            student,
-            tuition: tuition[0] || null,
-            attendance: attendance || [],
-            discipline: discipline || []
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
 // Backward compatibility for old links: redirect to phone-based dashboard URL
-app.get('/phuhuynh/index/:studentId/:idCard', requireParentAuthPage, async (req, res) => {
+app.get('/phuhuynh/index/:studentId/:idCard', async (req, res) => {
     try {
         const { studentId, idCard } = req.params;
         const connection = await pool.getConnection();
         
         // Verify student exists
         const [students] = await connection.query(
-            "SELECT * FROM students WHERE student_id = ? AND id_card = ? AND parent_phone = ?",
-            [studentId, idCard, req.parentAuth.parentPhone]
+            "SELECT * FROM students WHERE student_id = ? AND id_card = ?",
+            [studentId, idCard]
         );
 
                 const [accounts] = await connection.query(
                         `SELECT parent_phone
                          FROM students
                          WHERE student_id = ?
-                             AND parent_phone = ?
                              AND COALESCE(parent_status, 'active') = 'active'
                          LIMIT 1`,
-                        [studentId, req.parentAuth.parentPhone]
+                        [studentId]
                 );
         
-        connection.release();
-        
+            connection.release();
         if (!students || students.length === 0) {
-            return forceReauthWithAlert(res, 'Duong dan khong thuoc tai khoan hien tai. Vui long dang nhap lai.');
+            return res.status(404).send('<h1>❌ Sinh viên không tìm thấy hoặc CCCD không khớp</h1>');
         }
 
         if (!accounts || accounts.length === 0) {
@@ -675,30 +488,29 @@ app.get('/phuhuynh/index/:studentId/:idCard', requireParentAuthPage, async (req,
 });
 
 // Backward compatibility for old dashboard links
-app.get('/phuhuynh/dashboard/:studentId/:idCard', requireParentAuthPage, async (req, res) => {
+app.get('/phuhuynh/dashboard/:studentId/:idCard', async (req, res) => {
     try {
         const { studentId, idCard } = req.params;
         const connection = await pool.getConnection();
 
         const [students] = await connection.query(
-            "SELECT * FROM students WHERE student_id = ? AND id_card = ? AND parent_phone = ?",
-            [studentId, idCard, req.parentAuth.parentPhone]
+            "SELECT * FROM students WHERE student_id = ? AND id_card = ?",
+            [studentId, idCard]
         );
 
                 const [accounts] = await connection.query(
                         `SELECT parent_phone
                          FROM students
                          WHERE student_id = ?
-                             AND parent_phone = ?
                              AND COALESCE(parent_status, 'active') = 'active'
                          LIMIT 1`,
-                        [studentId, req.parentAuth.parentPhone]
+                        [studentId]
                 );
 
         connection.release();
 
         if (!students || students.length === 0) {
-            return forceReauthWithAlert(res, 'Duong dan khong thuoc tai khoan hien tai. Vui long dang nhap lai.');
+            return res.status(404).send('<h1>❌ Sinh viên không tìm thấy hoặc CCCD không khớp</h1>');
         }
 
         if (!accounts || accounts.length === 0) {
@@ -712,13 +524,9 @@ app.get('/phuhuynh/dashboard/:studentId/:idCard', requireParentAuthPage, async (
 });
 
 // Phone-based detail route kept for compatibility: redirect to canonical student/id-card URL
-app.get('/phuhuynh/chitiet/:parentPhone(\\d+)', requireParentAuthPage, async (req, res) => {
+app.get('/phuhuynh/chitiet/:parentPhone(\\d+)', async (req, res) => {
     try {
         const { parentPhone } = req.params;
-
-        if (req.parentAuth.parentPhone !== parentPhone) {
-            return forceReauthWithAlert(res, 'Ban vua thay doi duong dan de truy cap tai khoan khac. Vui long dang nhap lai.');
-        }
 
         const connection = await pool.getConnection();
 
@@ -743,21 +551,21 @@ app.get('/phuhuynh/chitiet/:parentPhone(\\d+)', requireParentAuthPage, async (re
 });
 
 // Canonical route: /chitiet/:studentId/:idCard
-app.get('/phuhuynh/chitiet/:studentId/:idCard', requireParentAuthPage, async (req, res) => {
+app.get('/phuhuynh/chitiet/:studentId/:idCard', async (req, res) => {
     try {
         const { studentId, idCard } = req.params;
         const connection = await pool.getConnection();
         
         // Verify student exists
         const [students] = await connection.query(
-            "SELECT * FROM students WHERE student_id = ? AND id_card = ? AND parent_phone = ?", 
-            [studentId, idCard, req.parentAuth.parentPhone]
+            "SELECT * FROM students WHERE student_id = ? AND id_card = ?", 
+            [studentId, idCard]
         );
         
         connection.release();
         
         if (!students || students.length === 0) {
-            return forceReauthWithAlert(res, 'Duong dan khong hop le hoac khong thuoc tai khoan cua ban. Vui long dang nhap lai.');
+            return res.status(404).send('<h1>❌ Sinh viên không tìm thấy hoặc CCCD không khớp</h1>');
         }
 
         res.sendFile(path.join(__dirname, 'public', 'detail.html'));
