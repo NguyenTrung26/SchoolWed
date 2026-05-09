@@ -260,7 +260,7 @@ app.post('/api/login', async (req, res) => {
         
         if (accounts.length > 0) {
             const account = accounts[0];
-            res.json({ success: true, redirectUrl: `/index.html?parentPhone=${encodeURIComponent(account.parent_phone)}` });
+            res.json({ success: true, redirectUrl: `/phuhuynh/index/${account.parent_phone}` });
         } else {
             res.status(401).json({ success: false, message: "Sai số điện thoại hoặc mật khẩu phụ huynh!" });
         }

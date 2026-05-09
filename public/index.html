@@ -458,7 +458,7 @@
             }
             
             if (STUDENT_ID && ID_CARD) {
-                document.getElementById('viewDetailLink').href = `/detail.html?studentId=${encodeURIComponent(STUDENT_ID)}&idCard=${encodeURIComponent(ID_CARD)}`;
+                document.getElementById('viewDetailLink').href = `/phuhuynh/chitiet/${STUDENT_ID}/${ID_CARD}`;
             }
 
             document.getElementById('studentInfoLoading').style.display = 'none';
